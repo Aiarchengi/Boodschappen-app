@@ -1,0 +1,13 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Boodschappenlijst",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Boodschappen",
+  "start_url": "/",
+  "theme_color": "#6a11cb",
+  "id": "Boodschappen-app.i.o.github.aiarchengi",
+  "description": "Simpele offline boodschappenlijst"
+}
