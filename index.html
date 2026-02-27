@@ -443,71 +443,37 @@
         </header>
 
         <main>
-            <!-- Nieuwe Calculator Sectie -->
-            <div class="calculator-section">
-                <h2><i class="fas fa-calculator"></i> Prijs per Eenheid Vergelijker</h2>
-                
-                <div class="compare-grid">
-                    <!-- Product A -->
-                    <div class="product-card">
-                        <h3>Product A</h3>
-                        <div class="input-group">
-                            <label>Prijs (€):</label>
-                            <input type="number" id="priceA" step="0.01" min="0" placeholder="2.50">
-                        </div>
-                        <div class="input-group">
-                            <label>Hoeveelheid (gram/ml/stuks):</label>
-                            <input type="number" id="quantityA" step="1" min="0" placeholder="500">
-                        </div>
-                        <div class="input-group">
-                            <label>Eenheid:</label>
-                            <select id="unitA">
-                                <option value="1">per gram/ml</option>
-                                <option value="100" selected>per 100 gram/ml</option>
-                                <option value="1000">per kg/liter</option>
-                            </select>
-                        </div>
-                        <div class="unit-price" id="unitPriceA">
-                            <span class="price">€0,00</span>
-                            <span class="unit">per eenheid</span>
-                        </div>
-                    </div>
-
-                    <!-- Product B -->
-                    <div class="product-card">
-                        <h3>Product B</h3>
-                        <div class="input-group">
-                            <label>Prijs (€):</label>
-                            <input type="number" id="priceB" step="0.01" min="0" placeholder="1.80">
-                        </div>
-                        <div class="input-group">
-                            <label>Hoeveelheid (gram/ml/stuks):</label>
-                            <input type="number" id="quantityB" step="1" min="0" placeholder="300">
-                        </div>
-                        <div class="input-group">
-                            <label>Eenheid:</label>
-                            <select id="unitB">
-                                <option value="1">per gram/ml</option>
-                                <option value="100" selected>per 100 gram/ml</option>
-                                <option value="1000">per kg/liter</option>
-                            </select>
-                        </div>
-                        <div class="unit-price" id="unitPriceB">
-                            <span class="price">€0,00</span>
-                            <span class="unit">per eenheid</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vergelijkingsresultaat -->
-                <div class="comparison-result" id="comparisonResult">
-                    Vul de gegevens in om te vergelijken
-                </div>
-
-                <button class="reset-btn" onclick="resetCalculator()">
-                    <i class="fas fa-undo"></i> Reset calculator
-                </button>
-            </div>
+           <!-- Compacte Calculator Sectie -->
+<div style="background: linear-gradient(135deg, #ff8c00 0%, #ff6b6b 100%); padding: 12px; border-radius: 12px; margin-bottom: 20px; color: white;">
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <i class="fas fa-calculator"></i>
+        <span style="font-weight: bold;">Prijsvergelijker</span>
+        <span style="font-size: 0.8rem; opacity: 0.8;">(per eenheid)</span>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <!-- Product A -->
+        <div style="background: white; padding: 8px; border-radius: 8px; color: #333;">
+            <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">A</div>
+            <input type="number" id="compactPriceA" placeholder="Prijs" step="0.01" style="width: 100%; padding: 5px; margin-bottom: 5px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;">
+            <input type="number" id="compactQtyA" placeholder="Hoeveelheid" step="0.01" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;">
+            <div id="compactResultA" style="font-size: 0.8rem; margin-top: 5px; color: #ff6b6b; font-weight: bold;"></div>
+        </div>
+        
+        <!-- Product B -->
+        <div style="background: white; padding: 8px; border-radius: 8px; color: #333;">
+            <div style="font-size: 0.8rem; font-weight: bold; margin-bottom: 5px;">B</div>
+            <input type="number" id="compactPriceB" placeholder="Prijs" step="0.01" style="width: 100%; padding: 5px; margin-bottom: 5px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;">
+            <input type="number" id="compactQtyB" placeholder="Hoeveelheid" step="0.01" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem;">
+            <div id="compactResultB" style="font-size: 0.8rem; margin-top: 5px; color: #ff6b6b; font-weight: bold;"></div>
+        </div>
+    </div>
+    
+    <!-- Resultaat -->
+    <div id="compactComparison" style="margin-top: 8px; padding: 6px; background: rgba(255,255,255,0.2); border-radius: 6px; font-size: 0.85rem; text-align: center;">
+        Vul beide producten in
+    </div>
+</div>
 
             <!-- Originele App (zelfde als eerder) -->
             <div class="app-controls">
