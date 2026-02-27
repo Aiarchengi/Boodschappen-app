@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boodschappenlijst met Prijsvergelijker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6a11cb">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        main {
+            padding: 15px;
+        }
+
+        /* KLEINERE CALCULATOR - ZELFDE FUNCTIES */
+        .calculator-section {
+            background: linear-gradient(135deg, #ff8c00 0%, #ff6b6b 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .calculator-section h2 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .product-card {
+            background: white;
+            padding: 8px;
+            border-radius: 6px;
+            color: #333;
+        }
+
+        .product-card h3 {
+            font-size: 0.9rem;
+            color: #ff8c00;
+            margin-bottom: 5px;
+        }
+
+        .input-group {
+            margin-bottom: 5px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.7rem;
+            margin-bottom: 2px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 4px;
+            border: 1px solid #e1e5eb;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .unit-price {
+            background: #f8f9fa;
+            padding: 4px;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 4px;
+            font-size: 0.8rem;
+        }
+
+        .unit-price .price {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .unit-price .unit {
+            font-size: 0.65rem;
+            color: #666;
+        }
+
+        .comparison-result {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .reset-btn {
+            background: white;
+            color: #ff6b6b;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        /* Originele app stijlen (behouden) */
+        .app-controls {
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        #itemInput {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        button {
+            padding: 12px 18px;
+            background-color: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        #addItemBtn {
+            background-color: #2575fc;
+        }
+
+        .bulk-add-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .bulk-add-section h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        #bulkItems {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        #bulkAddBtn {
+            width: 100%;
+            background-color: #00b09b;
+        }
+
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 12px;
+            background-color: #e9ecef;
+            color: #495057;
+            font-size: 0.85rem;
+        }
+
+        .filter-btn.active {
+            background-color: #6a11cb;
+            color: white;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        #sortButton {
+            background-color: #ff6b6b;
+            font-size: 0.85rem;
+            padding: 8px 12px;
+        }
+
+        .visibility-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        #toggleCompleted, #clearCompleted {
+            font-size: 0.85rem;
+            padding: 8px 12px;
+        }
+
+        #toggleCompleted {
+            background-color: #ff8c00;
+        }
+
+        #clearCompleted {
+            background-color: #ff4757;
+        }
+
+        .shopping-list-container {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .list-header h2 {
+            font-size: 1.2rem;
+        }
+
+        .stats {
+            font-size: 0.8rem;
+        }
+
+        #shoppingList {
+            list-style-type: none;
+            margin-bottom: 15px;
+        }
+
+        .shopping-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid #6a11cb;
+        }
+
+        .shopping-item.completed {
+            opacity: 0.7;
+            border-left-color: #00b09b;
+        }
+
+        .item-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+
+        .item-text {
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .delete-btn {
+            background-color: transparent;
+            color: #ff4757;
+            padding: 5px;
+            width: 35px;
+            height: 35px;
+        }
+
+        .hint {
+            padding: 10px;
+            font-size: 0.85rem;
+        }
+
+        .presets-section {
+            padding: 15px;
+        }
+
+        .presets-section h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .preset-btn {
+            padding: 8px 15px;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            padding: 15px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .compare-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-shopping-cart"></i> Mijn Boodschappenlijst</h1>
+            <p class="subtitle">Met prijsvergelijker per eenheid</p>
+        </header>
+
+        <main>
+            <!-- KLEINE CALCULATOR - ZELFDE FUNCTIES -->
+            <div class="calculator-section">
+                <h2><i class="fas fa-calculator"></i> Prijs per Eenheid</h2>
+                
+                <div class="compare-grid">
+                    <!-- Product A -->
+                    <div class="product-card">
+                        <h3>Product A</h3>
+                        <div class="input-group">
+                            <label>Prijs (€):</label>
+                            <input type="number" id="priceA" step="0.01" min="0" placeholder="2.50">
+                        </div>
+                        <div class="input-group">
+                            <label>Hoeveelheid:</label>
+                            <input type="number" id="quantityA" step="1" min="0" placeholder="500">
+                        </div>
+                        <div class="input-group">
+                            <label>Toon per:</label>
+                            <select id="unitA">
+                                <option value="1">per gram/ml</option>
+                                <option value="100" selected>per 100g/ml</option>
+                                <option value="1000">per kg/liter</option>
+                            </select>
+                        </div>
+                        <div class="unit-price" id="unitPriceA">
+                            <span class="price">€0,00</span>
+                            <span class="unit">per eenheid</span>
+                        </div>
+                    </div>
+
+                    <!-- Product B -->
+                    <div class="product-card">
+                        <h3>Product B</h3>
+                        <div class="input-group">
+                            <label>Prijs (€):</label>
+                            <input type="number" id="priceB" step="0.01" min="0" placeholder="1.80">
+                        </div>
+                        <div class="input-group">
+                            <label>Hoeveelheid:</label>
+                            <input type="number" id="quantityB" step="1" min="0" placeholder="300">
+                        </div>
+                        <div class="input-group">
+                            <label>Toon per:</label>
+                            <select id="unitB">
+                                <option value="1">per gram/ml</option>
+                                <option value="100" selected>per 100g/ml</option>
+                                <option value="1000">per kg/liter</option>
+                            </select>
+                        </div>
+                        <div class="unit-price" id="unitPriceB">
+                            <span class="price">€0,00</span>
+                            <span class="unit">per eenheid</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultaat -->
+                <div class="comparison-result" id="comparisonResult">
+                    Vul de gegevens in om te vergelijken
+                </div>
+
+                <button class="reset-btn" onclick="resetCalculator()">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+            </div>
+
+            <!-- Originele App -->
+            <div class="app-controls">
+                <div class="input-group">
+                    <input type="text" id="itemInput" placeholder="Voeg een item toe (bijv: Brood)">
+                    <button id="addItemBtn"><i class="fas fa-plus"></i> Toevoegen</button>
+                </div>
+                
+                <div class="bulk-add-section">
+                    <h3><i class="fas fa-bolt"></i> Meerdere items</h3>
+                    <textarea id="bulkItems" placeholder="Brood, Melk, Eieren..."></textarea>
+                    <button id="bulkAddBtn"><i class="fas fa-layer-group"></i> Alles toevoegen</button>
+                </div>
+
+                <div class="filter-controls">
+                    <div class="filter-buttons">
+                        <button id="showAll" class="filter-btn active">Alle</button>
+                        <button id="showActive" class="filter-btn">Actief</button>
+                        <button id="showCompleted" class="filter-btn">Afgevinkt</button>
+                    </div>
+                    <div class="sort-controls">
+                        <button id="sortButton"><i class="fas fa-sort-alpha-down"></i> Sorteer</button>
+                    </div>
+                    <div class="visibility-controls">
+                        <button id="toggleCompleted"><i class="fas fa-eye-slash"></i> Verberg</button>
+                        <button id="clearCompleted"><i class="fas fa-trash-alt"></i> Verwijder</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shopping-list-container">
+                <div class="list-header">
+                    <h2><i class="fas fa-list"></i> Lijst</h2>
+                    <div class="stats">
+                        <span id="totalCount">0</span> items
+                        <span id="activeCount" class="active-stat">0</span> actief
+                        <span id="completedCount" class="completed-stat">0</span> afgevinkt
+                    </div>
+                </div>
+
+                <div class="empty-state" id="emptyState">
+                    <i class="fas fa-shopping-basket"></i>
+                    <h3>Je lijst is leeg</h3>
+                    <p>Voeg items toe</p>
+                </div>
+
+                <ul id="shoppingList"></ul>
+            </div>
+
+            <div class="presets-section">
+                <h3><i class="fas fa-star"></i> Snel toevoegen</h3>
+                <div class="preset-buttons">
+                    <button class="preset-btn" data-items="Brood, Melk, Eieren">Basis</button>
+                    <button class="preset-btn" data-items="Koffie, Thee, Suiker">Dranken</button>
+                    <button class="preset-btn" data-items="Appels, Bananen, Sinaasappels">Fruit</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Boodschappenlijst met Prijsvergelijker</p>
+        </footer>
+    </div>
+
+    <script>
+        // CALCULATOR FUNCTIES (precies hetzelfde)
+        function berekenPrijsPerEenheid() {
+            const priceA = parseFloat(document.getElementById('priceA').value) || 0;
+            const quantityA = parseFloat(document.getElementById('quantityA').value) || 1;
+            const unitA = parseFloat(document.getElementById('unitA').value);
+            
+            const priceB = parseFloat(document.getElementById('priceB').value) || 0;
+            const quantityB = parseFloat(document.getElementById('quantityB').value) || 1;
+            const unitB = parseFloat(document.getElementById('unitB').value);
+            
+            const unitPriceA = (priceA / quantityA) * unitA;
+            const unitPriceB = (priceB / quantityB) * unitB;
+            
+            document.getElementById('unitPriceA').innerHTML = `
+                <span class="price">€${unitPriceA.toFixed(2)}</span>
+                <span class="unit">per ${unitA} ${getUnitText(unitA)}</span>
+            `;
+            
+            document.getElementById('unitPriceB').innerHTML = `
+                <span class="price">€${unitPriceB.toFixed(2)}</span>
+                <span class="unit">per ${unitB} ${getUnitText(unitB)}</span>
+            `;
+            
+            const resultElement = document.getElementById('comparisonResult');
+            
+            if (priceA === 0 || priceB === 0 || quantityA === 0 || quantityB === 0) {
+                resultElement.innerHTML = 'Vul alle velden in';
+                return;
+            }
+            
+            const verschil = Math.abs(unitPriceA - unitPriceB);
+            const goedkoper = unitPriceA < unitPriceB ? 'A' : 'B';
+            
+            if (unitPriceA === unitPriceB) {
+                resultElement.innerHTML = '🎯 Beide even duur!';
+            } else {
+                resultElement.innerHTML = `✅ Product ${goedkoper} is €${verschil.toFixed(2)} voordeliger`;
+            }
+        }
+
+        function getUnitText(unit) {
+            switch(unit) {
+                case 1: return 'g/ml';
+                case 100: return 'g/ml';
+                case 1000: return 'kg/l';
+                default: return 'eenheid';
+            }
+        }
+
+        function resetCalculator() {
+            document.getElementById('priceA').value = '';
+            document.getElementById('quantityA').value = '';
+            document.getElementById('priceB').value = '';
+            document.getElementById('quantityB').value = '';
+            document.getElementById('unitA').value = '100';
+            document.getElementById('unitB').value = '100';
+            document.getElementById('unitPriceA').innerHTML = '<span class="price">€0,00</span><span class="unit">per eenheid</span>';
+            document.getElementById('unitPriceB').innerHTML = '<span class="price">€0,00</span><span class="unit">per eenheid</span>';
+            document.getElementById('comparisonResult').innerHTML = 'Vul de gegevens in';
+        }
+
+        // Event listeners
+        document.getElementById('priceA').addEventListener('input', berekenPrijsPerEenheid);
+        document.getElementById('quantityA').addEventListener('input', berekenPrijsPerEenheid);
+        document.getElementById('unitA').addEventListener('change', berekenPrijsPerEenheid);
+        document.getElementById('priceB').addEventListener('input', berekenPrijsPerEenheid);
+        document.getElementById('quantityB').addEventListener('input', berekenPrijsPerEenheid);
+        document.getElementById('unitB').addEventListener('change', berekenPrijsPerEenheid);
+
+        // BOODSCHAPPENLIJST FUNCTIES (precies hetzelfde)
+        const itemInput = document.getElementById('itemInput');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const bulkItems = document.getElementById('bulkItems');
+        const bulkAddBtn = document.getElementById('bulkAddBtn');
+        const shoppingList = document.getElementById('shoppingList');
+        const emptyState = document.getElementById('emptyState');
+        const totalCount = document.getElementById('totalCount');
+        const activeCount = document.getElementById('activeCount');
+        const completedCount = document.getElementById('completedCount');
+        const showAllBtn = document.getElementById('showAll');
+        const showActiveBtn = document.getElementById('showActive');
+        const showCompletedBtn = document.getElementById('showCompleted');
+        const toggleCompletedBtn = document.getElementById('toggleCompleted');
+        const clearCompletedBtn = document.getElementById('clearCompleted');
+        const sortButton = document.getElementById('sortButton');
+        const presetButtons = document.querySelectorAll('.preset-btn');
+
+        let items = JSON.parse(localStorage.getItem('shoppingItems')) || [];
+        let hideCompleted = false;
+        let currentFilter = 'all';
+        let sortOrder = 'normal';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadItems();
+            updateStats();
+            updateList();
+            
+            addItemBtn.addEventListener('click', addItem);
+            itemInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addItem();
+            });
+            
+            bulkAddBtn.addEventListener('click', addBulkItems);
+            
+            showAllBtn.addEventListener('click', () => setFilter('all'));
+            showActiveBtn.addEventListener('click', () => setFilter('active'));
+            showCompletedBtn.addEventListener('click', () => setFilter('completed'));
+            
+            toggleCompletedBtn.addEventListener('click', toggleCompletedVisibility);
+            clearCompletedBtn.addEventListener('click', clearCompleted);
+            sortButton.addEventListener('click', toggleSort);
+            
+            presetButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    bulkItems.value = button.getAttribute('data-items');
+                });
+            });
+        });
+
+        function toggleSort() {
+            sortOrder = sortOrder === 'normal' ? 'alphabetical' : 'normal';
+            sortButton.innerHTML = sortOrder === 'alphabetical' ? 
+                '<i class="fas fa-sort-alpha-up"></i> Normaal' : 
+                '<i class="fas fa-sort-alpha-down"></i> Sorteer';
+            updateList();
+        }
+
+        function sortItems(itemsToSort) {
+            if (sortOrder === 'alphabetical') {
+                return [...itemsToSort].sort((a, b) => a.text.localeCompare(b.text, 'nl'));
+            }
+            return itemsToSort;
+        }
+
+        function addItem() {
+            const text = itemInput.value.trim();
+            if (text) {
+                items.push({id: Date.now(), text, completed: false});
+                itemInput.value = '';
+                saveItems();
+                updateList();
+                updateStats();
+            }
+        }
+
+        function addBulkItems() {
+            const text = bulkItems.value.trim();
+            if (text) {
+                const itemArray = text.split(/[\n,]/);
+                itemArray.forEach(itemText => {
+                    const trimmedText = itemText.trim();
+                    if (trimmedText) {
+                        items.push({id: Date.now() + Math.random(), text: trimmedText, completed: false});
+                    }
+                });
+                saveItems();
+                updateList();
+                updateStats();
+                bulkItems.value = '';
+            }
+        }
+
+        function toggleItem(id) {
+            const item = items.find(i => i.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                saveItems();
+                updateList();
+                updateStats();
+            }
+        }
+
+        function deleteItem(id) {
+            items = items.filter(item => item.id !== id);
+            saveItems();
+            updateList();
+            updateStats();
+        }
+
+        function updateList() {
+            shoppingList.innerHTML = '';
+            
+            let filteredItems = items;
+            if (currentFilter === 'active') filteredItems = items.filter(item => !item.completed);
+            if (currentFilter === 'completed') filteredItems = items.filter(item => item.completed);
+            
+            filteredItems = sortItems(filteredItems);
+            
+            emptyState.style.display = filteredItems.length === 0 ? 'block' : 'none';
+            
+            filteredItems.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'shopping-item';
+                if (item.completed) li.classList.add('completed');
+                if (hideCompleted && item.completed) li.classList.add('hidden');
+                
+                li.innerHTML = `
+                    <input type="checkbox" class="item-checkbox" ${item.completed ? 'checked' : ''}>
+                    <span class="item-text">${item.text}</span>
+                    <button class="delete-btn"><i class="fas fa-times"></i></button>
+                `;
+                
+                li.querySelector('.item-checkbox').addEventListener('click', () => toggleItem(item.id));
+                li.querySelector('.delete-btn').addEventListener('click', () => deleteItem(item.id));
+                
+                shoppingList.appendChild(li);
+            });
+        }
+
+        function updateStats() {
+            const total = items.length;
+            const completed = items.filter(item => item.completed).length;
+            const active = total - completed;
+            
+            totalCount.textContent = total;
+            activeCount.textContent = active;
+            completedCount.textContent = completed;
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (filter === 'all') showAllBtn.classList.add('active');
+            if (filter === 'active') showActiveBtn.classList.add('active');
+            if (filter === 'completed') showCompletedBtn.classList.add('active');
+            updateList();
+        }
+
+        function toggleCompletedVisibility() {
+            hideCompleted = !hideCompleted;
+            toggleCompletedBtn.innerHTML = hideCompleted ? 
+                '<i class="fas fa-eye"></i> Toon' : 
+                '<i class="fas fa-eye-slash"></i> Verberg';
+            updateList();
+        }
+
+        function clearCompleted() {
+            if (confirm('Alle afgevinkte items verwijderen?')) {
+                items = items.filter(item => !item.completed);
+                saveItems();
+                updateList();
+                updateStats();
+            }
+        }
+
+        function saveItems() {
+            localStorage.setItem('shoppingItems', JSON.stringify(items));
+        }
+
+        function loadItems() {
+            const savedItems = localStorage.getItem('shoppingItems');
+            if (savedItems) {
+                items = JSON.parse(savedItems);
+            }
+        }
+    </script>
+</body>
+</html>
