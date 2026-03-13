@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boodschappenlijst 2026 V2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        main {
+            padding: 25px;
+        }
+
+        /* Calculator */
+        .calculator-wrapper {
+            background: linear-gradient(135deg, #ff8c00 0%, #ff6b6b 100%);
+            border-radius: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .calculator-header {
+            width: 100%;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            text-align: left;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calculator-header:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .calculator-content {
+            padding: 0 20px 20px 20px;
+        }
+
+        .calculator-content.collapsed {
+            display: none;
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .product-card {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            color: #333;
+        }
+
+        .product-card h3 {
+            font-size: 1rem;
+            color: #ff8c00;
+            margin-bottom: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 8px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #e1e5eb;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .unit-price {
+            background: #f8f9fa;
+            padding: 6px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 6px;
+        }
+
+        .unit-price .price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .unit-price .unit {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .comparison-result {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .reset-btn {
+            background: white;
+            color: #ff6b6b;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        .reset-btn:hover {
+            background: #f8f9fa;
+        }
+
+        /* Bulk toevoegen */
+        .bulk-add-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .bulk-add-section h3 {
+            margin-bottom: 15px;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #bulkItems {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #e1e5eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+
+        #bulkAddBtn {
+            width: 100%;
+            background-color: #00b09b;
+            padding: 15px 25px;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        #bulkAddBtn:hover {
+            background-color: #009688;
+        }
+
+        /* Filters */
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            color: #495057;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .filter-btn.active {
+            background-color: #6a11cb;
+            color: white;
+        }
+
+        /* Hoofdlijst */
+        .main-list-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .main-list-header {
+            width: 100%;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border: none;
+            border-left: 5px solid #6a11cb;
+            text-align: left;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #444;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-list-header:hover {
+            background-color: #f0f0f0;
+        }
+
+        .main-list-content {
+            padding: 0 20px 20px 20px;
+        }
+
+        .main-list-content.collapsed {
+            display: none;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stats {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .stats span {
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        #totalCount {
+            background-color: #e9ecef;
+        }
+
+        .active-stat {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .completed-stat {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+
+        #shoppingList {
+            list-style-type: none;
+            margin-bottom: 20px;
+        }
+
+        .shopping-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #6a11cb;
+        }
+
+        .shopping-item.completed {
+            opacity: 0.7;
+            border-left-color: #00b09b;
+        }
+
+        .item-checkbox {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #00b09b;
+        }
+
+        .item-text {
+            flex: 1;
+            font-size: 1.1rem;
+        }
+
+        .delete-btn {
+            background-color: transparent;
+            color: #ff4757;
+            border: none;
+            padding: 8px;
+            font-size: 1.2rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .hint {
+            background-color: #e7f5ff;
+            padding: 15px;
+            border-radius: 10px;
+            color: #0c5460;
+            font-size: 0.9rem;
+        }
+
+        /* Eigen lijsten */
+        .custom-lists-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .custom-lists-section h3 {
+            margin-bottom: 15px;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .list-item {
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .list-header-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: white;
+            border: none;
+            border-left: 5px solid #6a11cb;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-content {
+            display: none;
+            padding: 15px;
+            border-top: 1px solid #e1e5eb;
+        }
+
+        .list-content.expanded {
+            display: block;
+        }
+
+        .list-items {
+            list-style-type: none;
+            margin-bottom: 10px;
+        }
+
+        .list-item-row {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .list-item-row.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .list-item-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .list-item-text {
+            flex: 1;
+        }
+
+        .list-delete-btn {
+            background: transparent;
+            color: #ff4757;
+            border: none;
+            padding: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .add-to-main-btn {
+            background-color: #00b09b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        /* Configuratie */
+        .config-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .config-header {
+            width: 100%;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .config-content {
+            padding: 20px;
+        }
+
+        .config-content.collapsed {
+            display: none;
+        }
+
+        .config-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .config-input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+        }
+
+        .config-input-group button {
+            padding: 10px 20px;
+            background-color: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .config-list {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .config-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e1e5eb;
+        }
+
+        .config-item input {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .config-delete-btn {
+            color: #ff4757;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f1f3f5;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-shopping-cart"></i> Mijn Boodschappenlijst</h1>
+            <p class="subtitle">Versie 2026</p>
+        </header>
+
+        <main>
+            <!-- Calculator -->
+            <div class="calculator-wrapper">
+                <button class="calculator-header" id="calcHeader">
+                    <span><i class="fas fa-calculator"></i> Prijs per Eenheid</span>
+                    <i class="fas fa-chevron-up" id="calcIcon"></i>
+                </button>
+                <div id="calcContent" class="calculator-content">
+                    <div class="compare-grid">
+                        <div class="product-card">
+                            <h3>Product A</h3>
+                            <div class="input-group">
+                                <label>Prijs (€):</label>
+                                <input type="number" id="priceA" step="0.01" min="0" placeholder="2.50">
+                            </div>
+                            <div class="input-group">
+                                <label>Hoeveelheid:</label>
+                                <input type="number" id="quantityA" step="1" min="0" placeholder="500">
+                            </div>
+                            <div class="input-group">
+                                <label>Toon per:</label>
+                                <select id="unitA">
+                                    <option value="1">per gram/ml</option>
+                                    <option value="100" selected>per 100g/ml</option>
+                                    <option value="1000">per kg/liter</option>
+                                </select>
+                            </div>
+                            <div class="unit-price" id="unitPriceA">€0,00</div>
+                        </div>
+                        <div class="product-card">
+                            <h3>Product B</h3>
+                            <div class="input-group">
+                                <label>Prijs (€):</label>
+                                <input type="number" id="priceB" step="0.01" min="0" placeholder="1.80">
+                            </div>
+                            <div class="input-group">
+                                <label>Hoeveelheid:</label>
+                                <input type="number" id="quantityB" step="1" min="0" placeholder="300">
+                            </div>
+                            <div class="input-group">
+                                <label>Toon per:</label>
+                                <select id="unitB">
+                                    <option value="1">per gram/ml</option>
+                                    <option value="100" selected>per 100g/ml</option>
+                                    <option value="1000">per kg/liter</option>
+                                </select>
+                            </div>
+                            <div class="unit-price" id="unitPriceB">€0,00</div>
+                        </div>
+                    </div>
+                    <div class="comparison-result" id="comparisonResult">Vul de gegevens in</div>
+                    <button class="reset-btn" id="resetCalc"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+            </div>
+
+            <!-- Bulk toevoegen -->
+            <div class="bulk-add-section">
+                <h3><i class="fas fa-bolt"></i> Meerdere items toevoegen</h3>
+                <textarea id="bulkItems" placeholder="Brood, Melk, Eieren..."></textarea>
+                <button id="bulkAddBtn"><i class="fas fa-layer-group"></i> Alles toevoegen</button>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-controls">
+                <button id="showAll" class="filter-btn active">Alle</button>
+                <button id="showActive" class="filter-btn">Actief</button>
+                <button id="showCompleted" class="filter-btn">Afgevinkt</button>
+                <button id="clearCompleted" class="filter-btn" style="background:#ff4757;color:white;">Verwijder afgevinkte</button>
+            </div>
+
+            <!-- Hoofdlijst -->
+            <div class="main-list-section">
+                <button class="main-list-header" id="mainListHeader">
+                    <span><i class="fas fa-list"></i> Boodschappenlijst</span>
+                    <i class="fas fa-chevron-up" id="mainListIcon"></i>
+                </button>
+                <div id="mainListContent" class="main-list-content">
+                    <div class="list-header">
+                        <div class="stats">
+                            <span id="totalCount">0</span> totaal
+                            <span id="activeCount" class="active-stat">0</span> actief
+                            <span id="completedCount" class="completed-stat">0</span> afgevinkt
+                        </div>
+                    </div>
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-shopping-basket"></i>
+                        <h3>Lijst is leeg</h3>
+                    </div>
+                    <ul id="shoppingList"></ul>
+                </div>
+            </div>
+
+            <!-- Eigen lijsten -->
+            <div class="custom-lists-section">
+                <h3><i class="fas fa-star"></i> Mijn lijsten</h3>
+                <div id="customLists"></div>
+            </div>
+
+            <!-- Configuratie -->
+            <div class="config-section">
+                <button class="config-header" id="configHeader">
+                    <span><i class="fas fa-cog"></i> Lijsten configureren</span>
+                    <i class="fas fa-chevron-up" id="configIcon"></i>
+                </button>
+                <div id="configContent" class="config-content">
+                    <div class="config-input-group">
+                        <input type="text" id="newListName" placeholder="Nieuwe lijst naam">
+                        <button id="addListBtn">Toevoegen</button>
+                    </div>
+                    <div id="listConfig" class="config-list"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer>Boodschappenlijst | 2026 V2</footer>
+    </div>
+
+    <script>
+        // State
+        let items = JSON.parse(localStorage.getItem('items')) || [];
+        let customLists = JSON.parse(localStorage.getItem('customLists')) || [
+            { name: 'Basis', items: ['Brood', 'Melk', 'Eieren'], expanded: false },
+            { name: 'Dranken', items: ['Koffie', 'Thee', 'Suiker'], expanded: false },
+            { name: 'Fruit', items: ['Appels', 'Bananen', 'Sinaasappels'], expanded: false }
+        ];
+        let currentFilter = 'all';
+
+        // DOM elementen
+        const calcHeader = document.getElementById('calcHeader');
+        const calcIcon = document.getElementById('calcIcon');
+        const calcContent = document.getElementById('calcContent');
+        const mainListHeader = document.getElementById('mainListHeader');
+        const mainListIcon = document.getElementById('mainListIcon');
+        const mainListContent = document.getElementById('mainListContent');
+        const configHeader = document.getElementById('configHeader');
+        const configIcon = document.getElementById('configIcon');
+        const configContent = document.getElementById('configContent');
+
+        // Calculator toggle
+        let calcExpanded = true;
+        calcHeader.addEventListener('click', () => {
+            calcExpanded = !calcExpanded;
+            calcContent.classList.toggle('collapsed', !calcExpanded);
+            calcIcon.className = calcExpanded ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        });
+
+        // Hoofdlijst toggle
+        let mainListExpanded = true;
+        mainListHeader.addEventListener('click', () => {
+            mainListExpanded = !mainListExpanded;
+            mainListContent.classList.toggle('collapsed', !mainListExpanded);
+            mainListIcon.className = mainListExpanded ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        });
+
+        // Config toggle
+        let configExpanded = true;
+        configHeader.addEventListener('click', () => {
+            configExpanded = !configExpanded;
+            configContent.classList.toggle('collapsed', !configExpanded);
+            configIcon.className = configExpanded ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+        });
+
+        // Calculator functies
+        function bereken() {
+            const pA = parseFloat(document.getElementById('priceA').value) || 0;
+            const qA = parseFloat(document.getElementById('quantityA').value) || 1;
+            const uA = parseFloat(document.getElementById('unitA').value);
+            const pB = parseFloat(document.getElementById('priceB').value) || 0;
+            const qB = parseFloat(document.getElementById('quantityB').value) || 1;
+            const uB = parseFloat(document.getElementById('unitB').value);
+            
+            const upA = (pA / qA) * uA;
+            const upB = (pB / qB) * uB;
+            
+            document.getElementById('unitPriceA').innerHTML = `<span class="price">€${upA.toFixed(2)}</span>`;
+            document.getElementById('unitPriceB').innerHTML = `<span class="price">€${upB.toFixed(2)}</span>`;
+            
+            const result = document.getElementById('comparisonResult');
+            if (pA && pB && qA && qB) {
+                if (upA === upB) result.innerHTML = '🎯 Even duur';
+                else result.innerHTML = `✅ ${upA < upB ? 'A' : 'B'} is €${Math.abs(upA-upB).toFixed(2)} voordeliger`;
+            } else result.innerHTML = 'Vul alle velden in';
+        }
+
+        document.getElementById('priceA').addEventListener('input', bereken);
+        document.getElementById('quantityA').addEventListener('input', bereken);
+        document.getElementById('unitA').addEventListener('change', bereken);
+        document.getElementById('priceB').addEventListener('input', bereken);
+        document.getElementById('quantityB').addEventListener('input', bereken);
+        document.getElementById('unitB').addEventListener('change', bereken);
+
+        document.getElementById('resetCalc').addEventListener('click', () => {
+            document.getElementById('priceA').value = '';
+            document.getElementById('quantityA').value = '';
+            document.getElementById('priceB').value = '';
+            document.getElementById('quantityB').value = '';
+            document.getElementById('unitA').value = '100';
+            document.getElementById('unitB').value = '100';
+            document.getElementById('unitPriceA').innerHTML = '€0,00';
+            document.getElementById('unitPriceB').innerHTML = '€0,00';
+            document.getElementById('comparisonResult').innerHTML = 'Vul de gegevens in';
+        });
+
+        // Hoofdlijst functies
+        document.getElementById('bulkAddBtn').addEventListener('click', () => {
+            const text = document.getElementById('bulkItems').value.trim();
+            if (text) {
+                text.split(/[\n,]/).forEach(t => {
+                    const trimmed = t.trim();
+                    if (trimmed) items.push({ id: Date.now() + Math.random(), text: trimmed, completed: false });
+                });
+                localStorage.setItem('items', JSON.stringify(items));
+                document.getElementById('bulkItems').value = '';
+                renderList();
+            }
+        });
+
+        document.getElementById('showAll').addEventListener('click', () => {
+            currentFilter = 'all';
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('showAll').classList.add('active');
+            renderList();
+        });
+
+        document.getElementById('showActive').addEventListener('click', () => {
+            currentFilter = 'active';
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('showActive').classList.add('active');
+            renderList();
+        });
+
+        document.getElementById('showCompleted').addEventListener('click', () => {
+            currentFilter = 'completed';
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('showCompleted').classList.add('active');
+            renderList();
+        });
+
+        document.getElementById('clearCompleted').addEventListener('click', () => {
+            items = items.filter(i => !i.completed);
+            localStorage.setItem('items', JSON.stringify(items));
+            renderList();
+        });
+
+        function renderList() {
+            const list = document.getElementById('shoppingList');
+            list.innerHTML = '';
+            
+            let filtered = items;
+            if (currentFilter === 'active') filtered = items.filter(i => !i.completed);
+            if (currentFilter === 'completed') filtered = items.filter(i => i.completed);
+            
+            filtered.sort((a, b) => a.text.localeCompare(b.text, 'nl'));
+            
+            document.getElementById('emptyState').style.display = filtered.length ? 'none' : 'block';
+            document.getElementById('totalCount').textContent = items.length;
+            document.getElementById('activeCount').textContent = items.filter(i => !i.completed).length;
+            document.getElementById('completedCount').textContent = items.filter(i => i.completed).length;
+            
+            filtered.forEach(item => {
+                const li = document.createElement('li');
+                li.className = `shopping-item ${item.completed ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <input type="checkbox" class="item-checkbox" ${item.completed ? 'checked' : ''}>
+                    <span class="item-text">${item.text}</span>
+                    <button class="delete-btn"><i class="fas fa-times"></i></button>
+                `;
+                li.querySelector('.item-checkbox').addEventListener('click', () => {
+                    item.completed = !item.completed;
+                    localStorage.setItem('items', JSON.stringify(items));
+                    renderList();
+                });
+                li.querySelector('.delete-btn').addEventListener('click', () => {
+                    items = items.filter(i => i.id !== item.id);
+                    localStorage.setItem('items', JSON.stringify(items));
+                    renderList();
+                });
+                list.appendChild(li);
+            });
+        }
+
+        // Custom lists
+        function renderCustomLists() {
+            const container = document.getElementById('customLists');
+            container.innerHTML = '';
+            
+            customLists.forEach((list, idx) => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                
+                const header = document.createElement('button');
+                header.className = 'list-header-btn';
+                header.innerHTML = `${list.name} <i class="fas fa-chevron-${list.expanded ? 'up' : 'down'}"></i>`;
+                header.onclick = () => {
+                    list.expanded = !list.expanded;
+                    localStorage.setItem('customLists', JSON.stringify(customLists));
+                    renderCustomLists();
+                };
+                
+                const content = document.createElement('div');
+                content.className = `list-content ${list.expanded ? 'expanded' : ''}`;
+                
+                const ul = document.createElement('ul');
+                ul.className = 'list-items';
+                
+                list.items.forEach((item, i) => {
+                    const key = `custom_${idx}_${i}`;
+                    const completed = localStorage.getItem(key) === 'true';
+                    
+                    const li = document.createElement('li');
+                    li.className = `list-item-row ${completed ? 'completed' : ''}`;
+                    li.innerHTML = `
+                        <input type="checkbox" class="list-item-checkbox" ${completed ? 'checked' : ''}>
+                        <span class="list-item-text">${item}</span>
+                        <button class="list-delete-btn"><i class="fas fa-times"></i></button>
+                    `;
+                    li.querySelector('.list-item-checkbox').onchange = (e) => {
+                        localStorage.setItem(key, e.target.checked);
+                        renderCustomLists();
+                    };
+                    li.querySelector('.list-delete-btn').onclick = () => {
+                        list.items.splice(i, 1);
+                        localStorage.setItem('customLists', JSON.stringify(customLists));
+                        renderCustomLists();
+                    };
+                    ul.appendChild(li);
+                });
+                
+                const addBtn = document.createElement('button');
+                addBtn.className = 'add-to-main-btn';
+                addBtn.innerHTML = '<i class="fas fa-plus"></i> Alles naar hoofdlijst';
+                addBtn.onclick = () => {
+                    list.items.forEach(t => items.push({ id: Date.now() + Math.random(), text: t, completed: false }));
+                    localStorage.setItem('items', JSON.stringify(items));
+                    renderList();
+                };
+                
+                content.appendChild(ul);
+                content.appendChild(addBtn);
+                div.appendChild(header);
+                div.appendChild(content);
+                container.appendChild(div);
+            });
+            
+            // Configuratie
+            const config = document.getElementById('listConfig');
+            config.innerHTML = '';
+            customLists.forEach((list, idx) => {
+                const item = document.createElement('div');
+                item.className = 'config-item';
+                item.innerHTML = `
+                    <input type="text" value="${list.name}" class="config-name">
+                    <input type="text" value="${list.items.join(', ')}" class="config-items">
+                    <span class="config-delete-btn"><i class="fas fa-trash"></i></span>
+                `;
+                item.querySelector('.config-name').onchange = (e) => {
+                    customLists[idx].name = e.target.value;
+                    localStorage.setItem('customLists', JSON.stringify(customLists));
+                    renderCustomLists();
+                };
+                item.querySelector('.config-items').onchange = (e) => {
+                    customLists[idx].items = e.target.value.split(',').map(s => s.trim()).filter(s => s);
+                    localStorage.setItem('customLists', JSON.stringify(customLists));
+                    renderCustomLists();
+                };
+                item.querySelector('.config-delete-btn').onclick = () => {
+                    customLists.splice(idx, 1);
+                    localStorage.setItem('customLists', JSON.stringify(customLists));
+                    renderCustomLists();
+                };
+                config.appendChild(item);
+            });
+        }
+
+        document.getElementById('addListBtn').addEventListener('click', () => {
+            const name = document.getElementById('newListName').value.trim();
+            if (name) {
+                customLists.push({ name, items: [], expanded: false });
+                localStorage.setItem('customLists', JSON.stringify(customLists));
+                renderCustomLists();
+                document.getElementById('newListName').value = '';
+            }
+        });
+
+        // Init
+        renderList();
+        renderCustomLists();
+    </script>
+</body>
+</html>
